@@ -1,0 +1,120 @@
+{
+  "plan_id": "tsmc-arizona-2026-06",
+  "factor_scores": [
+    {
+      "project_id": "tsmc-arizona-site",
+      "factor_id": "chip-allocation",
+      "raw_weight": 0.1,
+      "severity_months": 4,
+      "evidence": [
+        {
+          "url": "https://pr.tsmc.com/english/news/3122",
+          "claim": "The announced Arizona plan is a fabrication buildout, so the project creates chip output rather than depending on allocated chips as a primary input.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.nist.gov/news-events/news/2024/04/biden-harris-administration-announces-preliminary-terms-tsmc-arizona",
+          "claim": "The public funding terms describe fab construction and production milestones, not a scarce external chip allocation needed to complete the site.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://investor.tsmc.com/english/annual-reports",
+          "claim": "TSMC reports capacity expansion as a capital and manufacturing execution program, which makes chip allocation a lower-probability binding factor for this plan.",
+          "retrieved_on": "2026-06-21"
+        }
+      ]
+    },
+    {
+      "project_id": "tsmc-arizona-site",
+      "factor_id": "transformer-lead-time",
+      "raw_weight": 0.18,
+      "severity_months": 9,
+      "evidence": [
+        {
+          "url": "https://www.energy.gov/oe/transformer-resilience-and-advanced-components",
+          "claim": "The Department of Energy treats large power transformers as a grid resilience and supply-chain risk area.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.energy.gov/sites/default/files/2024-04/Transformer%20Supply%20Chain%20Report%20-%20April%202024_0.pdf",
+          "claim": "DOE's transformer supply-chain report identifies long lead times and constrained domestic capacity for transformer equipment.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.srpnet.com/grid-water-management/grid-management/improvement-projects",
+          "claim": "Local utility grid improvement work is material to large Phoenix-area load additions, so transformer timing remains a medium-risk factor.",
+          "retrieved_on": "2026-06-21"
+        }
+      ]
+    },
+    {
+      "project_id": "tsmc-arizona-site",
+      "factor_id": "water-rights",
+      "raw_weight": 0.24,
+      "severity_months": 12,
+      "evidence": [
+        {
+          "url": "https://www.azwater.gov/ama/phoenix-ama",
+          "claim": "The Phoenix Active Management Area is a regulated groundwater area, making long-horizon water availability a direct project constraint.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.phoenix.gov/waterservices/water-resource-planning",
+          "claim": "Phoenix publishes water-resource planning material for drought and growth management, which keeps water supply visible in any large industrial plan.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.tsmc.com/static/abouttsmcaz/environment.htm",
+          "claim": "TSMC Arizona describes environmental and water-management commitments, indicating that water remains an explicitly managed input for the site.",
+          "retrieved_on": "2026-06-21"
+        }
+      ]
+    },
+    {
+      "project_id": "tsmc-arizona-site",
+      "factor_id": "skilled-trades-labor",
+      "raw_weight": 0.33,
+      "severity_months": 18,
+      "evidence": [
+        {
+          "url": "https://www.reuters.com/technology/tsmc-says-lack-skilled-workers-delay-start-arizona-chip-production-2023-07-20/",
+          "claim": "TSMC publicly linked the Arizona schedule to a shortage of skilled workers for equipment installation.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.bls.gov/oes/current/oes_38060.htm",
+          "claim": "BLS occupational data for the Phoenix metro area bounds the local pool for construction and technical labor needed by a fab buildout.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.azcommerce.com/semiconductors/",
+          "claim": "Arizona's semiconductor-development material emphasizes workforce and supplier-base development as part of the sector buildout.",
+          "retrieved_on": "2026-06-21"
+        }
+      ]
+    },
+    {
+      "project_id": "tsmc-arizona-site",
+      "factor_id": "permit-timeline",
+      "raw_weight": 0.15,
+      "severity_months": 6,
+      "evidence": [
+        {
+          "url": "https://www.phoenix.gov/pdd",
+          "claim": "City planning and development review remains a required path for large site work in Phoenix.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.maricopa.gov/1578/Air-Quality",
+          "claim": "Maricopa County air-quality permitting is relevant to major industrial construction and operations.",
+          "retrieved_on": "2026-06-21"
+        },
+        {
+          "url": "https://www.azdeq.gov/Permits",
+          "claim": "Arizona environmental permits can affect industrial project sequencing, though public evidence makes this less binding than labor for this plan.",
+          "retrieved_on": "2026-06-21"
+        }
+      ]
+    }
+  ]
+}

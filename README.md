@@ -1,86 +1,92 @@
 # BindingConstraint
 
-Cross-domain diagnostic that takes a Fortune 500 firm's announced multi-year capex plan and produces a probabilistic ranking of which physical input is most likely to be the binding constraint per project, when it bites, and by how much.
+BindingConstraint is a deterministic Python diagnostic that takes a published capex plan and ranks which physical input is most likely to bind the plan.
+
+The v0.1 slice ships one checked-in case: TSMC Arizona. It scores five candidate constraints and writes one JSONL report artifact.
 
 ## What this is
 
-A consulting-grade diagnostic tool. Given a published capex plan (a data
-center campus, a fab, an EV factory, a hydrogen plant), it scores the
-five candidate bottlenecks — chip allocation, transformer lead time,
-water rights, skilled-trades labor, permit timeline — and produces a
-written diagnostic with the binding constraint named, quantified, and
-sourced.
+The report is the product. The engine exists to validate checked-in public evidence, normalize curated fixture weights, and emit a sourced artifact that can be reviewed without network access.
 
-The shape of the artifact is a public report per firm-plan. v0 ships
-one report: TSMC Arizona, Intel Ohio, or Micron NY. The model behind it
-is a probabilistic factor model where each factor draws on a separate
-public dataset.
+The five v0 factors are:
 
-This repo is the diagnostic layer. GridSilicon, chip-supply-chain-map,
-and FabRiskRADAR are the upstream data sources. Capex announcements are
-where the work starts; the binding-constraint call is where it ends.
+- `chip-allocation`
+- `transformer-lead-time`
+- `water-rights`
+- `skilled-trades-labor`
+- `permit-timeline`
 
-## Who uses it
-
-CFOs and capex-strategy leads at firms with one billion dollars or more
-in annual physical-infra capex. PE and infra-fund deal teams underwriting
-the same plans. Insurance and surety carriers pricing project-completion
-risk.
-
-## Why now
-
-Capex plans across data centers, fabs, EV factories, hydrogen plants,
-biomanufacturing, and reshored manufacturing all share a skinny-
-bottleneck shape. The press release names the dollar number. The binding
-constraint is rarely capital; it is almost always something physical
-that the press release ignored. No consultant has shipped a unified
-diagnostic across these domains.
+The headline field names the modal factor. The report body keeps the full probability distribution.
 
 ## Status
 
-v0 scaffold; no implementation yet. The specs ledger names the first set
-of requirements (R-BC-001 through R-BC-010). The first PR after this
-scaffold lands the constraint taxonomy plus the report template.
+v0.1 runnable fixture. The repo validates and renders one deterministic diagnostic for TSMC Arizona using checked-in public-source evidence and curated factor weights.
 
 ## How to run
 
-Placeholder; will land in spec 0002. v0 ships the constraint taxonomy,
-the report template, and the first firm-plan diagnostic as a checked-in
-Markdown artifact under `reports/`. No runtime is required to read the
-artifact.
+From the repo root:
 
-The eventual CLI shape (target for spec 0003):
+```text
+python -m binding_constraint validate
+python -m binding_constraint diagnose --out reports/2026-06-tsmc-arizona.jsonl
+python -m pytest
+```
 
-```
-python -m binding_constraint diagnose --plan plans/tsmc_arizona.yaml --out reports/2026-08-tsmc-arizona.md
-```
+`validate` recomputes the default report and fails if `reports/2026-06-tsmc-arizona.jsonl` is stale.
 
 ## Layout
 
-```
+```text
 binding-constraint/
   README.md
   LICENSE
   AGENTS.md
-  .gitignore
+  PRODUCT_BRIEF.md
+  SYSTEM_MAP.md
+  STATUS.md
+  binding_constraint/
+    __init__.py
+    __main__.py
+    cli.py
+    io.py
+    model.py
+    scoring.py
+  plans/
+    tsmc-arizona.json
+  data/
+    fixture_weights/
+      tsmc-arizona.json
+  reports/
+    2026-06-tsmc-arizona.jsonl
   specs/
     0001-foundation/
       requirements.md
       design.md
       tasks.md
       acceptance.md
+    0002-design/
+      requirements.md
+      design.md
+      tasks.md
+      acceptance.md
+  tests/
+    test_binding_constraint.py
   docs/
     first-pr.md
 ```
 
-Future directories (named in specs, not created yet):
+Future directories named by the foundation spec:
 
-- `src/binding_constraint/` — diagnostic engine
-- `src/factors/` — one module per constraint factor
-- `plans/` — checked-in capex plan inputs in YAML
-- `reports/` — published Markdown diagnostics
-- `data/` — cached upstream datasets (gitignored)
-- `eval/` — backtest harness against 2018-2025 announced-vs-delivered
+- `schemas/` - JSON schema versions of the runtime validators
+- `templates/` - Markdown report templates
+- `eval/` - backtest harness against 2018-2025 announced-vs-delivered
+
+## Boundaries
+
+- no API keys
+- no live fetch
+- no private-source checks
+- no web UI in v0.1
 
 ## License
 

@@ -1,0 +1,20 @@
+{
+  "firm": "TSMC",
+  "plan_id": "tsmc-arizona-2026-06",
+  "plan_name": "TSMC Arizona advanced semiconductor manufacturing site",
+  "retrieved_on": "2026-06-21",
+  "projects": [
+    {
+      "project_id": "tsmc-arizona-site",
+      "name": "Arizona advanced semiconductor manufacturing site",
+      "geography": "Phoenix, Arizona, United States",
+      "project_type": "semiconductor-fab",
+      "announced_capex_usd": 65000000000,
+      "announced_completion": "2030-12-31",
+      "public_sources": [
+        "https://pr.tsmc.com/english/news/3122",
+        "https://www.nist.gov/news-events/news/2024/04/biden-harris-administration-announces-preliminary-terms-tsmc-arizona"
+      ]
+    }
+  ]
+}

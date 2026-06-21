@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "binding-constraint"
+version = "0.1.0"
+description = "Deterministic diagnostic for ranking physical constraints on a published capex plan."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = []
+
+[project.scripts]
+binding-constraint = "binding_constraint.cli:main"
+
+[tool.setuptools]
+packages = ["binding_constraint"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

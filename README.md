@@ -34,6 +34,32 @@ python -m pytest
 
 `validate` recomputes the default report and fails if `reports/2026-06-tsmc-arizona.jsonl` is stale.
 
+`show` reads the committed report and prints the ranked factor distribution as a
+readable table plus a one-line headline (no network, exits 0):
+
+```text
+python -m binding_constraint show
+```
+
+## live demo
+
+A read-only Streamlit page (`streamlit_app.py`) renders the same committed report:
+the ranked factor distribution, severity, and sourced evidence for the modal
+constraint. No network, no secrets — it reads `reports/*.jsonl` directly.
+
+Run locally:
+
+```text
+python -m pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+Deploy on Streamlit Community Cloud -> New app -> repo `AthenaTheOwl/binding-constraint`,
+branch `main`, main file `streamlit_app.py`.
+
+<!-- live-url: -->
+
+
 ## Layout
 
 ```text

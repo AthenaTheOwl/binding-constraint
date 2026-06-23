@@ -1,8 +1,16 @@
 from __future__ import annotations
 
 from binding_constraint.cli import main
-from binding_constraint.io import DEFAULT_PLAN, DEFAULT_REPORT, DEFAULT_WEIGHTS, load_json, serialize_jsonl
+from binding_constraint.io import (
+    DEFAULT_PLAN,
+    DEFAULT_REPORT,
+    DEFAULT_WEIGHTS,
+    load_json,
+    read_jsonl,
+    serialize_jsonl,
+)
 from binding_constraint.model import FACTOR_IDS, Plan, load_factor_scores
+from binding_constraint.render import headline, render_report
 from binding_constraint.scoring import build_records
 
 
@@ -27,6 +35,24 @@ def test_ranking_is_closed_distribution() -> None:
 
 def test_cli_validate_passes() -> None:
     assert main(["validate"]) == 0
+
+
+def test_cli_show_reads_committed_report(capsys) -> None:
+    assert main(["show"]) == 0
+    out = capsys.readouterr().out
+    assert "binding-constraint diagnostic" in out
+    assert "skilled-trades labor" in out
+    assert "most likely bound by" in out
+
+
+def test_show_render_matches_committed_artifact() -> None:
+    records = read_jsonl(DEFAULT_REPORT)
+    text = render_report(records)
+    top = records[0]["ranking"][0]
+    assert top["factor_id"] == "skilled-trades-labor"
+    assert "skilled-trades labor" in headline(records[0])
+    # every ranked factor surfaces in the rendered table
+    assert text.count("\n") > len(records[0]["ranking"])
 
 
 def test_cli_diagnose_writes_deterministic_jsonl() -> None:

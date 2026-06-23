@@ -4,8 +4,18 @@ import argparse
 import sys
 from pathlib import Path
 
-from .io import DEFAULT_PLAN, DEFAULT_REPORT, DEFAULT_WEIGHTS, load_json, read_text, serialize_jsonl, write_jsonl
+from .io import (
+    DEFAULT_PLAN,
+    DEFAULT_REPORT,
+    DEFAULT_WEIGHTS,
+    load_json,
+    read_jsonl,
+    read_text,
+    serialize_jsonl,
+    write_jsonl,
+)
 from .model import Plan, ValidationError, load_factor_scores
+from .render import render_report
 from .scoring import build_records
 
 
@@ -26,6 +36,11 @@ def build_parser() -> argparse.ArgumentParser:
     diagnose.add_argument("--weights", type=Path, default=DEFAULT_WEIGHTS)
     diagnose.add_argument("--out", type=Path, default=DEFAULT_REPORT)
     diagnose.add_argument("--generated-on", default="2026-06-21")
+
+    show = subparsers.add_parser(
+        "show", help="Print the committed report as a ranked, readable table."
+    )
+    show.add_argument("--report", type=Path, default=DEFAULT_REPORT)
 
     return parser
 
@@ -55,6 +70,18 @@ def run_diagnose(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_show(args: argparse.Namespace) -> int:
+    if not args.report.exists():
+        raise ValidationError(
+            f"{args.report} not found; run `python -m binding_constraint diagnose` first"
+        )
+    records = read_jsonl(args.report)
+    if not records:
+        raise ValidationError(f"{args.report} contains no report records")
+    print(render_report(records))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -63,6 +90,8 @@ def main(argv: list[str] | None = None) -> int:
             return run_validate(args)
         if args.command == "diagnose":
             return run_diagnose(args)
+        if args.command == "show":
+            return run_show(args)
     except ValidationError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1

@@ -1,0 +1,5 @@
+# Streamlit Community Cloud reads this file. The app (streamlit_app.py) reads the
+# committed reports/*.jsonl directly and imports factor labels from the local
+# package, so it needs streamlit plus the package itself (`.`).
+streamlit>=1.40
+.

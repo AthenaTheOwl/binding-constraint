@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -92,7 +93,10 @@ def main(argv: list[str] | None = None) -> int:
             return run_diagnose(args)
         if args.command == "show":
             return run_show(args)
-    except ValidationError as exc:
+    # OSError covers a missing/unreadable path or a directory passed as a file;
+    # JSONDecodeError and plain ValueError cover malformed or wrong-shaped input.
+    # ValidationError is a ValueError, so a single ValueError arm keeps its message.
+    except (ValidationError, OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
     parser.error(f"unknown command: {args.command}")

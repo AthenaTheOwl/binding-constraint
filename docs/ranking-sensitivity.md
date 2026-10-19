@@ -7,7 +7,3 @@ The engine normalizes curated factor weights in `binding_constraint/scoring.py`.
 A useful next experiment perturbs one factor at a time while holding the other four fixed. Record the smallest relative weight change that changes the modal factor. A close contest should carry that switch threshold beside the modal label. Keep evidence age and source quality separate from the numerical perturbation; additional citations to the same announcement do not create independent observations.
 
 The implemented input gate now rejects NaN and infinity before normalization. Remaining proposed checks are scale invariance, ties, near-ties, and a report that states the cohort and forecast horizon before using probability language. Recalibration requires observed completion outcomes and a held-out cohort. A score change caused only by new rubric weights should preserve the old report and explain the changed assumption.
-
-## References
-
-- https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm

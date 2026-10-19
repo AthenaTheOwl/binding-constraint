@@ -11,4 +11,3 @@ The implemented input gate now rejects NaN and infinity before normalization. Re
 ## References
 
 - https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm
-- https://github.com/3orionkings/ai-product-team/blob/main/workflows/process-change.md

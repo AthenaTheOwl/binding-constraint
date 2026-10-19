@@ -84,3 +84,7 @@ Boundaries for v0.1: no API keys, no live fetch, no private-source checks, no we
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Method update
+
+[October method update: A normalized ranking still needs a sensitivity test](docs/ranking-sensitivity.md).

@@ -20,12 +20,13 @@ def _scores_by_project(scores: tuple[FactorScore, ...]) -> dict[str, list[Factor
 
 
 def _rank_scores(scores: list[FactorScore]) -> list[tuple[FactorScore, float]]:
-    total = sum(score.raw_weight for score in scores)
-    if total <= 0:
+    scale = max((score.raw_weight for score in scores), default=0.0)
+    if scale <= 0:
         raise ValidationError("factor raw weights must sum to a positive value")
+    total = sum(score.raw_weight / scale for score in scores)
     factor_order = {factor_id: index for index, factor_id in enumerate(FACTOR_IDS)}
     ranked = sorted(scores, key=lambda score: (-score.raw_weight, factor_order[score.factor_id]))
-    probabilities = [round(score.raw_weight / total, 4) for score in ranked]
+    probabilities = [round((score.raw_weight / scale) / total, 4) for score in ranked]
     correction = round(1.0 - sum(probabilities), 4)
     if probabilities:
         probabilities[0] = round(probabilities[0] + correction, 4)

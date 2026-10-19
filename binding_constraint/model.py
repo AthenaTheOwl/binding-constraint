@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
+from math import isfinite
 from typing import Any
 
 
@@ -55,7 +56,12 @@ def _require_public_url(value: Any, context: str) -> str:
 def _require_number(value: Any, context: str, minimum: float = 0.0) -> float:
     if not isinstance(value, (int, float)) or isinstance(value, bool):
         raise ValidationError(f"{context} must be a number")
-    number = float(value)
+    try:
+        number = float(value)
+    except OverflowError as exc:
+        raise ValidationError(f"{context} must be finite") from exc
+    if not isfinite(number):
+        raise ValidationError(f"{context} must be finite")
     if number < minimum:
         raise ValidationError(f"{context} must be >= {minimum}")
     return number

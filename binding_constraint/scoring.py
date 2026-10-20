@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from decimal import ROUND_HALF_UP, Decimal
+
 from .model import FACTOR_IDS, FactorScore, Plan, Project, ValidationError
 
 
@@ -26,11 +28,24 @@ def _rank_scores(scores: list[FactorScore]) -> list[tuple[FactorScore, float]]:
     total = sum(score.raw_weight / scale for score in scores)
     factor_order = {factor_id: index for index, factor_id in enumerate(FACTOR_IDS)}
     ranked = sorted(scores, key=lambda score: (-score.raw_weight, factor_order[score.factor_id]))
-    probabilities = [round((score.raw_weight / scale) / total, 4) for score in ranked]
-    correction = round(1.0 - sum(probabilities), 4)
+    probabilities = [_round_probability((score.raw_weight / scale) / total) for score in ranked]
     if probabilities:
-        probabilities[0] = round(probabilities[0] + correction, 4)
-    return list(zip(ranked, probabilities))
+        probabilities[0] += Decimal(1) - sum(probabilities)
+    return [(score, float(probability)) for score, probability in zip(ranked, probabilities)]
+
+
+# Float division leaves ~1e-16 of noise, so a share that is exactly on a
+# 4-decimal half (e.g. 0.0875 / 0.29375) can land just above or just below it
+# depending on how the weights were scaled. Snapping to 12 decimals first
+# removes that noise; the 4-decimal step then rounds half up deterministically,
+# so rescaling every weight by the same constant reproduces the same numbers.
+_SNAP = Decimal("1e-12")
+_REPORTED = Decimal("0.0001")
+
+
+def _round_probability(share: float) -> Decimal:
+    snapped = Decimal(share).quantize(_SNAP, rounding=ROUND_HALF_UP)
+    return snapped.quantize(_REPORTED, rounding=ROUND_HALF_UP)
 
 
 def _record_for_project(

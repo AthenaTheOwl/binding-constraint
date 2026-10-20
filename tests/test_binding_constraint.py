@@ -157,24 +157,27 @@ def test_rank_scores_normalizes_unnormalized_weights_scale_invariantly() -> None
     assert ranked(1e300) == expected
 
 
-def test_rank_scores_rescaling_preserves_ranking_at_rounding_ties() -> None:
-    # At a 4-decimal rounding tie, rescaling can move a probability by 0.0001,
-    # so only the ranking and the closed sum are scale-invariant.
+def test_rank_scores_rescaling_is_exact_at_rounding_ties() -> None:
+    # These weights sum to 3.2, so four shares sit exactly on a 4-decimal half
+    # (0.29375, 0.284375, 0.25625, 0.0875). Float noise used to push them either
+    # side of the half depending on scale, moving a probability by 0.0001.
+    # Rescaling every weight by the same constant must now reproduce the same
+    # probabilities exactly, with halves rounded up.
     ev = _evidence()
     weights = dict(zip(FACTOR_IDS, (0.94, 0.82, 0.28, 0.25, 0.91)))
 
-    def ranked(scale: float) -> list[tuple[FactorScore, float]]:
-        return _rank_scores(
-            [
-                FactorScore(project_id="p", factor_id=fid, raw_weight=w * scale, severity_months=1, evidence=ev)
-                for fid, w in weights.items()
-            ]
-        )
+    def ranked(scale: float) -> list[tuple[str, float]]:
+        scores = [
+            FactorScore(project_id="p", factor_id=fid, raw_weight=w * scale, severity_months=1, evidence=ev)
+            for fid, w in weights.items()
+        ]
+        return [(score.factor_id, probability) for score, probability in _rank_scores(scores)]
 
-    base, scaled = ranked(1.0), ranked(10.0)
-    assert [score.factor_id for score, _ in base] == [score.factor_id for score, _ in scaled]
-    assert round(sum(p for _, p in base), 4) == round(sum(p for _, p in scaled), 4) == 1.0
-    assert all(abs(p - q) <= 0.0001 + 1e-12 for (_, p), (_, q) in zip(base, scaled))
+    base = ranked(1.0)
+    assert [p for _, p in base] == [0.2937, 0.2844, 0.2563, 0.0875, 0.0781]
+    assert round(sum(p for _, p in base), 4) == 1.0
+    for scale in (10.0, 3.0, 7.0, 0.1, 1e-6, 1e6, 1e300):
+        assert ranked(scale) == base, scale
 
 
 def test_validate_reports_missing_plan_without_traceback(capsys) -> None:

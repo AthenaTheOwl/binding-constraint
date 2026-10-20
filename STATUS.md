@@ -11,6 +11,7 @@ Implemented:
 - deterministic JSONL report artifact
 - CLI commands: `validate` and `diagnose`
 - pytest coverage for fixture validation, probability closure, and deterministic report rendering
+- reported probabilities are exact under rescaling of all weights, including shares that sit on a 4-decimal rounding half
 
 ## Known limits
 

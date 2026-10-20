@@ -81,10 +81,10 @@ specs/  tests/  docs/
 
 Boundaries for v0.1: no API keys, no live fetch, no private-source checks, no web UI beyond the read-only Streamlit page. Future directories named by the foundation spec — `schemas/`, `templates/`, `eval/` (a backtest harness against 2018-2025 announced-vs-delivered) — are not built yet.
 
-## License
-
-MIT. See [LICENSE](LICENSE).
-
 ## Method update
 
 [October method update: A normalized ranking still needs a sensitivity test](docs/ranking-sensitivity.md).
+
+## License
+
+MIT. See [LICENSE](LICENSE).

@@ -127,6 +127,56 @@ def test_rank_scores_absorbs_rounding_residual_into_top() -> None:
     assert sum(probabilities) == 1.0
 
 
+def test_shipped_weights_are_already_normalized() -> None:
+    # The fixture's curated weights sum to 1.0, so the shipped report's
+    # probabilities are the raw weights unchanged; normalization is identity here.
+    plan = Plan.from_dict(load_json(DEFAULT_PLAN), context=str(DEFAULT_PLAN))
+    scores = list(load_factor_scores(load_json(DEFAULT_WEIGHTS), plan=plan, context=str(DEFAULT_WEIGHTS)))
+    assert round(sum(score.raw_weight for score in scores), 10) == 1.0
+    assert all(probability == score.raw_weight for score, probability in _rank_scores(scores))
+
+
+def test_rank_scores_normalizes_unnormalized_weights_scale_invariantly() -> None:
+    # Weights that do not sum to one (e.g. the Streamlit sliders) are divided by
+    # their total. Any positive rescaling yields the same ranking; these weights
+    # have no 4-decimal rounding ties, so the probabilities match exactly too.
+    ev = _evidence()
+    raw = {"chip-allocation": 0.2, "water-rights": 1.0, "permit-timeline": 0.8}
+
+    def ranked(scale: float) -> list[tuple[str, float]]:
+        scores = [
+            FactorScore(project_id="p", factor_id=fid, raw_weight=w * scale, severity_months=1, evidence=ev)
+            for fid, w in raw.items()
+        ]
+        return [(score.factor_id, probability) for score, probability in _rank_scores(scores)]
+
+    expected = [("water-rights", 0.5), ("permit-timeline", 0.4), ("chip-allocation", 0.1)]
+    assert ranked(1.0) == expected
+    assert ranked(2.0) == expected
+    assert ranked(1e-6) == expected
+    assert ranked(1e300) == expected
+
+
+def test_rank_scores_rescaling_preserves_ranking_at_rounding_ties() -> None:
+    # At a 4-decimal rounding tie, rescaling can move a probability by 0.0001,
+    # so only the ranking and the closed sum are scale-invariant.
+    ev = _evidence()
+    weights = dict(zip(FACTOR_IDS, (0.94, 0.82, 0.28, 0.25, 0.91)))
+
+    def ranked(scale: float) -> list[tuple[FactorScore, float]]:
+        return _rank_scores(
+            [
+                FactorScore(project_id="p", factor_id=fid, raw_weight=w * scale, severity_months=1, evidence=ev)
+                for fid, w in weights.items()
+            ]
+        )
+
+    base, scaled = ranked(1.0), ranked(10.0)
+    assert [score.factor_id for score, _ in base] == [score.factor_id for score, _ in scaled]
+    assert round(sum(p for _, p in base), 4) == round(sum(p for _, p in scaled), 4) == 1.0
+    assert all(abs(p - q) <= 0.0001 + 1e-12 for (_, p), (_, q) in zip(base, scaled))
+
+
 def test_validate_reports_missing_plan_without_traceback(capsys) -> None:
     assert main(["validate", "--plan", "does-not-exist.json"]) == 1
     err = capsys.readouterr().err
